@@ -25,9 +25,9 @@ public class CustomCorFilter implements Filter {
         log.info("ServletRequest {}", servletRequest);
         log.info("ServletResponse {}", servletResponse);
         final HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-        httpServletResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        httpServletResponse.setHeader(ACCESS_CONTROL_ALLOW_METHOD, "*");
-        httpServletResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADER, "Authorization, Content-Type");
+        httpServletResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "**");
+        httpServletResponse.setHeader(ACCESS_CONTROL_ALLOW_METHOD, "**");
+      //  httpServletResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADER, "Authorization, Content-Type");
         httpServletResponse.setHeader(ACCESS_CONTROL_MAX_AGE, "3600");
 
         if(HttpMethod.OPTIONS.name().equalsIgnoreCase(((HttpServletRequest) servletRequest).getMethod())) {

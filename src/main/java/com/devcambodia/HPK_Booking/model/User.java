@@ -16,7 +16,7 @@ import java.util.Set;
 @Setter
 public class User implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private String email;
@@ -34,7 +34,9 @@ public class User implements Serializable {
     private UserStatus status;
     private int loginCount;
     private String phone;
+    @Column(name = "access_token", columnDefinition = "TEXT")
     private String accessToken;
+    @Column(name = "refresh_token", columnDefinition = "TEXT")
     private String refreshToken;
     private String imageUrl;
     private Long createdBy;

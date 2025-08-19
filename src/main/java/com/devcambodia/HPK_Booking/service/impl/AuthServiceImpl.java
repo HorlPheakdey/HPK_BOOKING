@@ -78,8 +78,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(Login login) {
-        final String email = login.getEmail();
-        final String password = login.getPassword();
+         String email = login.getEmail();
+         String password = login.getPassword();
         CustomUserDetail customUserDetail = (CustomUserDetail) customUserDetailService.loadUserByUsername(email);
         if (StringUtil.isNullOrEmpty(password)) {
             log.error("Password is null or empty");
@@ -89,11 +89,14 @@ public class AuthServiceImpl implements AuthService {
             log.error("Passwords do not match");
             throw new HandlePassword("Passwords do not match");
         }
-
-        return new AuthResponse(
-                jwtService.generateAccessToken(customUserDetail),
-                jwtService.generateRefreshToken(customUserDetail)
-        );
+        customUserDetailService.saveUserLoginCount(customUserDetail.getEmail());
+        String accessToken = jwtService.generateAccessToken(customUserDetail);
+        String refreshToken = jwtService.generateRefreshToken(customUserDetail);
+        User user= new User();
+        user.setRefreshToken(refreshToken);
+        user.setAccessToken(accessToken);
+        userRepository.save(user);
+        return new AuthResponse(accessToken, refreshToken);
     }
 
     @Override
