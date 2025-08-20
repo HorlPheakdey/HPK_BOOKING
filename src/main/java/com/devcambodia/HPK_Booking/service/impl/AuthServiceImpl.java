@@ -23,10 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -86,17 +83,17 @@ public class AuthServiceImpl implements AuthService {
             throw new HandleNotNull("Password is null or empty");
         }
         if (!passwordEncoder.matches(password, customUserDetail.getPassword())) {
-            log.error("Passwords do not match");
-            throw new HandlePassword("Passwords do not match");
+            log.error("Invalid Password");
+            throw new HandlePassword("Invalid Password");
         }
         customUserDetailService.saveUserLoginCount(customUserDetail.getEmail());
-        String accessToken = jwtService.generateAccessToken(customUserDetail);
-        String refreshToken = jwtService.generateRefreshToken(customUserDetail);
-        User user= new User();
-        user.setRefreshToken(refreshToken);
-        user.setAccessToken(accessToken);
-        userRepository.save(user);
-        return new AuthResponse(accessToken, refreshToken);
+        AuthResponse authResponse = new AuthResponse();
+        Optional<User> obj = userRepository.findFirstByEmailAndStatus(email, UserStatus.ACTIVE);
+        if (obj.isPresent()){
+            authResponse.accessToken = obj.get().getAccessToken();
+            authResponse.refreshToken = obj.get().getRefreshToken();
+        }
+        return authResponse;
     }
 
     @Override

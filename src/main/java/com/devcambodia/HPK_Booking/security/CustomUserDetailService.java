@@ -2,6 +2,7 @@ package com.devcambodia.HPK_Booking.security;
 
 import com.devcambodia.HPK_Booking.model.User;
 import com.devcambodia.HPK_Booking.repository.UserRepository;
+import com.devcambodia.HPK_Booking.service.JwtService;
 import com.devcambodia.HPK_Booking.utils.UserStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CustomUserDetailService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final JwtService jwtService;
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return this.customUserDetail(email);
@@ -40,14 +42,15 @@ public class CustomUserDetailService implements UserDetailsService {
     public void saveUserLoginCount(String email){
         Optional<User> user = userRepository.findFirstByEmailAndStatus(email,UserStatus.ACTIVE);
         if (user.isPresent()){
-            int loginCount = user.get().getLoginCount()+1;
-            user.get().setLoginCount(loginCount);
-            user.get().setModifiedAt(new Date());
+            User obj = user.get();
+            obj.setLoginCount(obj.getLoginCount()+1);
+            obj.setAccessToken(jwtService.generateAccessToken(customUserDetail(email)));
+            obj.setRefreshToken(jwtService.generateRefreshToken(customUserDetail(email)));
             if (user.get().getLoginCount() > 3){
                 log.warn("Login count exceeded");
                 user.get().setStatus(UserStatus.LOCKED);
             }
-            userRepository.save(user.get());
+            userRepository.save(obj);
         }
     }
     public void updateLoginCount(String email) {

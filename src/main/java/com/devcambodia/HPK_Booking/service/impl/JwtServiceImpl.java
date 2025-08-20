@@ -12,6 +12,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,12 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class JwtServiceImpl extends JwtConfig implements JwtService {
     private final CustomUserDetailService customUserDetailService;
+
+    public JwtServiceImpl(@Lazy CustomUserDetailService customUserDetailService) {
+        this.customUserDetailService = customUserDetailService;
+    }
 
     @Override
     public Key getKeys() {

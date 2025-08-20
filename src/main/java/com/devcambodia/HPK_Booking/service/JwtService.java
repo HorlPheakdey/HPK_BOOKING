@@ -2,7 +2,6 @@ package com.devcambodia.HPK_Booking.service;
 
 import com.devcambodia.HPK_Booking.security.CustomUserDetail;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
 import java.util.Date;
@@ -16,4 +15,5 @@ public interface JwtService {
     boolean validateRefreshToken(String token);
     Date validateExpirationDate(String token);
     Date claimsDate(String token);
+
 }

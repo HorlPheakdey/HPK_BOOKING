@@ -57,9 +57,10 @@ public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
         CustomUserDetail customUserDetail = (CustomUserDetail) authResult.getPrincipal();
         var accessToken = jwtService.generateAccessToken(customUserDetail);
         var refreshToken = jwtService.generateRefreshToken(customUserDetail);
-        customUserDetailService.updateLoginCount(customUserDetail.getEmail());
         customUserDetailService.saveUserLoginCount(customUserDetail.getEmail());
-        AuthResponse authResponse = new AuthResponse(accessToken, refreshToken);
+        AuthResponse authResponse = new AuthResponse();
+        authResponse.setAccessToken(accessToken);
+        authResponse.setRefreshToken(refreshToken);
         var authRes = new ObjectMapper().writeValueAsString(authResponse);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
